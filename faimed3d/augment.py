@@ -312,7 +312,7 @@ def crop_3d(t: (TensorDicom3D, TensorMask3D), crop_by: (int, float), perc_crop =
         x1,x2,y1,y2,z1,z2 = int(x1*x),int(x2*x),int(y1*y),int(y2*y),int(z1*z),int(z2*z)
 
     if t.ndim == 3:
-        return retain_type(t[x1:x-x2, y1:y-y2, z1:z-z2].to(dev), typ = typ)
+        return retain_type(t[x1:x-x2, y1:y-y2, z1:z-z2].to(dev), t)
     else:
         return t[:,x1:x-x2, y1:y-y2, z1:z-z2].to(dev)
 
@@ -459,7 +459,7 @@ def grid_tfms(t: (TensorDicom3D,TensorMask3D), func, mode):
     out = F.grid_sample(t.float(), grid, align_corners=True, mode = mode, padding_mode='reflection')
     out = out.permute(0,1,3,2).contiguous()
     if typ == TensorMask3D: out=out.round().long()
-    return retain_type(out, typ = typ)
+    return retain_type(out, t)
 
 class RandomWarp3D(RandTransform):
     def __init__(self, p=0.5, max_magnitude = 0.25):
